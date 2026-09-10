@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #ECEFF3;
+    color: #0F172A;
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 400;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.015em;
+    text-shadow: 0 0 14px rgba(56, 189, 248, 0.2), 0 1px 2px rgba(15, 23, 42, 0.08);
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Custom subtle metallic scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #E2E8F0;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #94A3B8;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #64748B;
+  }
+}
+
+/* Luxury Endless Wallpaper Pattern: Embossed Metallic AR Monograms on Light Marble */
+.ar-infinite-wallpaper {
+  background-color: #ECEFF3;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7) 0%, rgba(236, 239, 243, 0.95) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Cdefs%3E%3ClinearGradient id='metalGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23334155' stop-opacity='0.22'/%3E%3Cstop offset='45%25' stop-color='%2364748B' stop-opacity='0.28'/%3E%3Cstop offset='55%25' stop-color='%23F8FAFC' stop-opacity='0.35'/%3E%3Cstop offset='100%25' stop-color='%231E293B' stop-opacity='0.25'/%3E%3C/linearGradient%3E%3Cfilter id='emboss' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='1' dy='1.5' stdDeviation='1' flood-color='%230F172A' flood-opacity='0.18'/%3E%3CfeDropShadow dx='-0.8' dy='-0.8' stdDeviation='0.6' flood-color='%23FFFFFF' flood-opacity='0.55'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23emboss)' fill='none' stroke='url(%23metalGrad)' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3C!-- Slanted AR Monogram Unit 1 --%3E%3Cg transform='translate(20, 15) skewX(-14) scale(0.65)'%3E%3Cpath d='M8 42 L24 6 L40 42'/%3E%3Cpath d='M16 28 L32 28'/%3E%3Cpath d='M46 42 L46 6 C58 6 68 12 68 22 C68 30 58 34 46 34 L66 42'/%3E%3C/g%3E%3C!-- Slanted AR Monogram Unit 2 (Staggered) --%3E%3Cg transform='translate(100, 75) skewX(-14) scale(0.65)'%3E%3Cpath d='M8 42 L24 6 L40 42'/%3E%3Cpath d='M16 28 L32 28'/%3E%3Cpath d='M46 42 L46 6 C58 6 68 12 68 22 C68 30 58 34 46 34 L66 42'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 160px 120px;
+}
+
+/* Marble & Metallic Slate Card Utilities */
+.marble-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.94) 100%);
+  border: 2px solid #CBD5E1;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+}
+
+.marble-card-dark {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  border: 2px solid #334155;
+  box-shadow: 0 8px 16px -4px rgba(15, 23, 42, 0.25);
+}
+
+/* Soft Neon Blue Glow on Titles */
+.neon-title-glow {
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.25), 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+.neon-title-glow-dark {
+  text-shadow: 0 0 14px rgba(56, 189, 248, 0.35), 0 0 24px rgba(14, 165, 233, 0.2);
+}
+
+/* Button & Tactile Card Utility Enhancements */
+.studio-btn-metallic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  border: 2px solid #334155;
+  background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+  color: #FFFFFF;
+  padding: 0.625rem 1.25rem;
+  box-shadow: 0 4px 8px -1px rgba(15, 23, 42, 0.2), 0 0 10px rgba(56, 189, 248, 0.1);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+.studio-btn-metallic:hover {
+  background: linear-gradient(180deg, #334155 0%, #1E293B 100%);
+  border-color: #64748B;
+  box-shadow: 0 6px 12px -1px rgba(15, 23, 42, 0.3), 0 0 14px rgba(56, 189, 248, 0.2);
+  transform: translateY(-1px);
+}
+.studio-btn-metallic:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px -1px rgba(15, 23, 42, 0.2);
+}
+
+.studio-btn-silver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  border: 2px solid #CBD5E1;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
+  color: #0F172A;
+  padding: 0.625rem 1.25rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+.studio-btn-silver:hover {
+  background: linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%);
+  border-color: #94A3B8;
+  color: #000000;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  header, footer, .no-print, button, input[type="range"] {
+    display: none !important;
+  }
+}

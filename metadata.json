@@ -1,0 +1,6 @@
+{
+  "name": "DropCheck — Escáner de Éxito y Masterización Musical",
+  "description": "Analizador profesional de pistas de audio para viralidad en TikTok y YouTube, balance de mezcla, fuerza del gancho y ecualización de estudio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
