@@ -95,7 +95,7 @@ export interface ImprovementBooster {
   applied: boolean;
 }
 
-export type AppView = 'audit' | 'cover-art' | 'tips-pro' | 'history' | 'assistant';
+export type AppView = 'audit' | 'real-analyzer' | 'cover-art' | 'tips-pro' | 'history' | 'assistant';
 
 export interface TrackHistoryItem {
   id: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Activity, Palette, Lightbulb, Music2, Sparkles, Cpu, Radio, History } from 'lucide-react';
+import { Activity, Palette, Lightbulb, Music2, Sparkles, Cpu, Radio, History, Headphones } from 'lucide-react';
 import { AppView } from '../types';
 
 interface ViewTransitionLoaderProps {
@@ -10,6 +10,17 @@ interface ViewTransitionLoaderProps {
 export const ViewTransitionLoader: React.FC<ViewTransitionLoaderProps> = ({ targetView }) => {
   const getLoaderInfo = () => {
     switch (targetView) {
+      case 'real-analyzer':
+        return {
+          title: 'ANALIZADOR REAL DE TU CANCIÓN',
+          step: 'Decodificando onda real con Web Audio API, FFT radix-2 y detección de hook...',
+          accentColor: 'text-sky-600',
+          accentBg: 'bg-sky-500',
+          borderAccent: 'border-sky-300',
+          badgeText: 'FFT & HOOK',
+          icon: Headphones,
+          animationType: 'equalizer',
+        };
       case 'history':
         return {
           title: 'HISTORIAL DE ANÁLISIS & COMPARATIVA',

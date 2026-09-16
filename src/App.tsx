@@ -15,12 +15,13 @@ import { StudioAssistantChat } from './components/StudioAssistantChat';
 import { CoverArtStudio } from './components/CoverArtStudio';
 import { TipsAcademy } from './components/TipsAcademy';
 import { HistoryView } from './components/HistoryView';
+import { RealSongAnalyzer } from './components/RealSongAnalyzer';
 import { ViewTransitionLoader } from './components/ViewTransitionLoader';
 import { AnalysisReport, AppView, TrackHistoryItem } from './types';
 import { analyzeAudioBuffer } from './utils/audioAnalyzer';
 import { exportReportToPDF } from './utils/pdfExport';
 import { DEMO_TRACKS, DemoTrackItem, createSyntheticDemoAudioBuffer } from './data/demoTracks';
-import { MessageSquareCode, FileDown, Sparkles, Activity, Palette, Lightbulb, AlertTriangle, History, Download } from 'lucide-react';
+import { MessageSquareCode, FileDown, Sparkles, Activity, Palette, Lightbulb, AlertTriangle, History, Download, Headphones } from 'lucide-react';
 import { masterBuffer, encodeWav16 } from './utils/dsp';
 
 let sharedDecodeCtx: AudioContext | null = null;
@@ -444,27 +445,47 @@ export default function App() {
                         </div>
                       </div>
 
-                      {/* Quick Switch to History, Cover Art or Tips CTA banner */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      {/* Quick Switch to History, Real Analyzer, Cover Art or Tips CTA banner */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         <button
-                          onClick={() => switchViewWithTransition('history')}
-                          className="flex items-center justify-between rounded-xl border-2 border-slate-300 bg-white p-4 text-left shadow-2xs hover:border-slate-800 hover:shadow-xs transition-all cursor-pointer group"
+                          onClick={() => switchViewWithTransition('real-analyzer')}
+                          className="flex items-center justify-between rounded-xl border-2 border-slate-300 bg-white p-3.5 text-left shadow-2xs hover:border-slate-800 hover:shadow-xs transition-all cursor-pointer group"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 group-hover:scale-105 transition-transform">
-                              <History className="h-5 w-5" />
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-pink-50 text-pink-600 border border-pink-200 group-hover:scale-105 transition-transform">
+                              <Headphones className="h-4 w-4" />
                             </div>
                             <div>
-                              <div className="flex items-center gap-2">
+                              <h4 className="font-bold text-xs font-mono text-slate-900 uppercase">
+                                Analizador Real
+                              </h4>
+                              <p className="text-[10px] text-slate-500 font-sans">
+                                FFT radix-2 y gancho 15s.
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-xs font-mono font-bold text-pink-600 group-hover:translate-x-1 transition-transform">→</span>
+                        </button>
+
+                        <button
+                          onClick={() => switchViewWithTransition('history')}
+                          className="flex items-center justify-between rounded-xl border-2 border-slate-300 bg-white p-3.5 text-left shadow-2xs hover:border-slate-800 hover:shadow-xs transition-all cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 group-hover:scale-105 transition-transform">
+                              <History className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-1.5">
                                 <h4 className="font-bold text-xs font-mono text-slate-900 uppercase">
                                   Historial
                                 </h4>
-                                <span className="rounded bg-emerald-100 px-1.5 py-0.2 text-[9px] font-mono font-bold text-emerald-800">
+                                <span className="rounded bg-emerald-100 px-1 py-0.2 text-[8px] font-mono font-bold text-emerald-800">
                                   {history.length}/3
                                 </span>
                               </div>
-                              <p className="text-[11px] text-slate-500 font-sans">
-                                Cambiar de track o comparar mediciones.
+                              <p className="text-[10px] text-slate-500 font-sans">
+                                Comparar mediciones.
                               </p>
                             </div>
                           </div>
@@ -473,18 +494,18 @@ export default function App() {
 
                         <button
                           onClick={() => switchViewWithTransition('cover-art')}
-                          className="flex items-center justify-between rounded-xl border-2 border-slate-300 bg-white p-4 text-left shadow-2xs hover:border-slate-800 hover:shadow-xs transition-all cursor-pointer group"
+                          className="flex items-center justify-between rounded-xl border-2 border-slate-300 bg-white p-3.5 text-left shadow-2xs hover:border-slate-800 hover:shadow-xs transition-all cursor-pointer group"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-50 text-sky-600 border border-sky-200 group-hover:scale-105 transition-transform">
-                              <Palette className="h-5 w-5" />
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50 text-sky-600 border border-sky-200 group-hover:scale-105 transition-transform">
+                              <Palette className="h-4 w-4" />
                             </div>
                             <div>
                               <h4 className="font-bold text-xs font-mono text-slate-900 uppercase">
-                                Crear Portada & Prompt IA
+                                Crear Portada
                               </h4>
-                              <p className="text-[11px] text-slate-500 font-sans">
-                                Medidas 3000x3000px y prompts.
+                              <p className="text-[10px] text-slate-500 font-sans">
+                                3000x3000px y prompts IA.
                               </p>
                             </div>
                           </div>
@@ -493,17 +514,17 @@ export default function App() {
 
                         <button
                           onClick={() => switchViewWithTransition('tips-pro')}
-                          className="flex items-center justify-between rounded-xl border-2 border-slate-300 bg-white p-4 text-left shadow-2xs hover:border-slate-800 hover:shadow-xs transition-all cursor-pointer group"
+                          className="flex items-center justify-between rounded-xl border-2 border-slate-300 bg-white p-3.5 text-left shadow-2xs hover:border-slate-800 hover:shadow-xs transition-all cursor-pointer group"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600 border border-amber-200 group-hover:scale-105 transition-transform">
-                              <Lightbulb className="h-5 w-5" />
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50 text-amber-600 border border-amber-200 group-hover:scale-105 transition-transform">
+                              <Lightbulb className="h-4 w-4" />
                             </div>
                             <div>
                               <h4 className="font-bold text-xs font-mono text-slate-900 uppercase">
-                                Tips del Día & Secretos Pro
+                                Tips del Día
                               </h4>
-                              <p className="text-[11px] text-slate-500 font-sans">
+                              <p className="text-[10px] text-slate-500 font-sans">
                                 Tabla frecuencias y fórmulas.
                               </p>
                             </div>
@@ -569,6 +590,18 @@ export default function App() {
                 <CoverArtStudio 
                   report={report} 
                   onNavigateToAudit={() => switchViewWithTransition('audit')}
+                />
+              )}
+
+              {/* VIEW: ANALIZADOR REAL DE TU CANCIÓN */}
+              {currentView === 'real-analyzer' && (
+                <RealSongAnalyzer
+                  loadedAudioBuffer={audioBuffer}
+                  loadedFileName={report?.metadata.fileName}
+                  onAuditInDropCheck={(file) => {
+                    handleFileSelected(file);
+                    switchViewWithTransition('audit');
+                  }}
                 />
               )}
 

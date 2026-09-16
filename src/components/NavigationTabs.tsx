@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Sliders, Palette, Lightbulb, MessageSquareCode, History } from 'lucide-react';
+import { Sliders, Palette, Lightbulb, MessageSquareCode, History, Headphones } from 'lucide-react';
 import { AppView } from '../types';
 
 interface NavigationTabsProps {
@@ -22,6 +22,12 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       label: 'Auditoría Acústica',
       icon: Sliders,
       badge: hasTrackLoaded ? 'DSP ACTIVO' : undefined,
+    },
+    {
+      id: 'real-analyzer',
+      label: 'Analizador Real',
+      icon: Headphones,
+      badge: 'FFT & HOOK',
     },
     {
       id: 'history',
