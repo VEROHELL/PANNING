@@ -20,7 +20,8 @@ import { AnalysisReport, AppView, TrackHistoryItem } from './types';
 import { analyzeAudioBuffer } from './utils/audioAnalyzer';
 import { exportReportToPDF } from './utils/pdfExport';
 import { DEMO_TRACKS, DemoTrackItem, createSyntheticDemoAudioBuffer } from './data/demoTracks';
-import { MessageSquareCode, FileDown, Sparkles, Activity, Palette, Lightbulb, AlertTriangle, History } from 'lucide-react';
+import { MessageSquareCode, FileDown, Sparkles, Activity, Palette, Lightbulb, AlertTriangle, History, Download } from 'lucide-react';
+import { masterBuffer, encodeWav16 } from './utils/dsp';
 
 let sharedDecodeCtx: AudioContext | null = null;
 function getDecodeCtx(): AudioContext {
@@ -50,6 +51,8 @@ export default function App() {
   const [currentAudioTime, setCurrentAudioTime] = useState(0);
   const [errorNotice, setErrorNotice] = useState<string | null>(null);
   const [history, setHistory] = useState<TrackHistoryItem[]>([]);
+  const [isMastering, setIsMastering] = useState(false);
+  const [masterResult, setMasterResult] = useState<{ buffer: AudioBuffer; outLufs: number; srcLufs: number; gainDb: number } | null>(null);
 
   // Helper to maintain the last 3 processed reports in state
   const saveToHistory = useCallback((newReport: AnalysisReport, buffer: AudioBuffer | null) => {
@@ -234,6 +237,39 @@ export default function App() {
     setIsChatOpen(false);
     setIsTransitioning(false);
     setCurrentView('audit');
+  };
+
+  const handleMasterize = async () => {
+    if (!audioBuffer || !report) return;
+    setIsMastering(true);
+    setMasterResult(null);
+    try {
+      const targetLufs = -9.0;
+      const result = await masterBuffer(audioBuffer, targetLufs, -1.0);
+      setMasterResult({
+        buffer: result.buffer,
+        srcLufs: result.srcLufs,
+        outLufs: result.outLufs,
+        gainDb: result.gainDb,
+      });
+    } catch (err) {
+      console.error('Mastering error:', err);
+    } finally {
+      setIsMastering(false);
+    }
+  };
+
+  const handleDownloadWav = () => {
+    if (!masterResult || !report) return;
+    const blob = encodeWav16(masterResult.buffer);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = report.metadata.fileName.replace(/\.[^.]+$/, '') + '_master.wav';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const switchViewWithTransition = useCallback((newView: AppView) => {
@@ -584,16 +620,34 @@ export default function App() {
         </button>
       )}
 
-      {/* Floating Action Button for Mini Chat (When report is active) */}
-      {report && !isChatOpen && (
-        <button
-          onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-20 right-5 z-40 studio-btn-metallic text-xs !py-3 !px-5 shadow-2xl animate-bounce cursor-pointer"
-          title="Abrir Asistente: ¿Cómo hago esto?"
-        >
-          <MessageSquareCode className="h-5 w-5 mr-2 text-sky-400" />
-          <span className="hidden sm:inline">¿Cómo hago esto? (Chat)</span>
-        </button>
+      {report && (
+        <div className="fixed bottom-56 right-5 z-40 flex flex-col gap-2 items-end">
+          {!masterResult ? (
+            <button
+              onClick={handleMasterize}
+              disabled={isMastering}
+              className="flex items-center gap-2 rounded-xl border-2 border-emerald-400/90 bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2.5 text-xs font-bold text-white shadow-2xl transition-transform hover:scale-105 cursor-pointer font-display disabled:opacity-50"
+              title="Masterizar esta pista a -9 LUFS"
+            >
+              <Sparkles className="h-4 w-4 animate-pulse" />
+              <span>{isMastering ? 'Masterizando...' : 'Masterizar'}</span>
+            </button>
+          ) : (
+            <div className="flex flex-col gap-1 items-end">
+              <div className="rounded-lg bg-emerald-950 border border-emerald-500 px-3 py-1 text-[10px] font-mono text-emerald-200">
+                {masterResult.srcLufs.toFixed(1)} → {masterResult.outLufs.toFixed(1)} LUFS
+              </div>
+              <button
+                onClick={handleDownloadWav}
+                className="flex items-center gap-2 rounded-xl border-2 border-sky-400/90 bg-gradient-to-r from-sky-500 to-blue-500 px-4 py-2.5 text-xs font-bold text-white shadow-2xl transition-transform hover:scale-105 cursor-pointer font-display"
+                title="Descargar el máster en WAV"
+              >
+                <Download className="h-4 w-4" />
+                <span>Descargar WAV</span>
+              </button>
+            </div>
+          )}
+        </div>
       )}
 
       {/* Sticky Bottom Audio Player Bar - Always active when track is loaded */}

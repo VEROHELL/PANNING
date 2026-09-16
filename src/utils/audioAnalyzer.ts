@@ -1,4 +1,5 @@
 import { AnalysisReport, FrequencyAlert, TimestampFeedback, ImprovementBooster, ViralCurveData, ViralPoint } from '../types';
+import { measureLufs, measureTruePeak, detectBPM, detectKey } from './dsp';
 
 export function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -803,32 +804,18 @@ export function analyzeAudioBuffer(
   const bestTikTokEnd = Math.min(Math.round(durationSec), bestTikTokStart + 12);
 
   // Commercial LUFS Estimation & Dynamics
-  const estimatedLufs = Math.max(-28, Math.min(-6, Math.round((20 * Math.log10(globalAvgEnergy + 0.00001) - 3.1) * 10) / 10));
-  const truePeakDb = Math.round(20 * Math.log10(maxPeak + 0.00001) * 10) / 10;
-  const dynamicRangeDb = Math.round(Math.abs(truePeakDb - estimatedLufs) * 10) / 10;
+  const lufsResult = measureLufs(audioBuffer);
+  const estimatedLufs = Math.round(lufsResult.integrated * 10) / 10;
+  const truePeakDb = Math.round(measureTruePeak(audioBuffer).db * 10) / 10;
+  const dynamicRangeDb = Math.round(lufsResult.lra * 10) / 10;
 
   // True Autocorrelation Tempo Detection (BPM)
-  const estimatedBpm = detectAccurateBpm(monoData, sampleRate, durationSec);
+  const estimatedBpm = detectBPM(audioBuffer);
 
   // Spectral profile calculation
   const spectralFeatures = extractSpectralFeatures(monoData, sampleRate);
 
-  // High-Precision Musical Key Assignment
-  const musicalKeys = [
-    'Sol Menor (G Minor)',
-    'Do Menor (C Minor)',
-    'Fa# Menor (F# Minor)',
-    'La Menor (A Minor)',
-    'Re Mayor (D Major)',
-    'Mi Menor (E Minor)',
-    'Si Menor (B Minor)',
-    'La Mayor (A Major)',
-    'Fa Menor (F Minor)',
-    'Do# Menor (C# Minor)',
-    'Sol Mayor (G Major)',
-    'Re Menor (D Minor)',
-  ];
-  const detectedKey = musicalKeys[Math.abs(Math.floor((globalAvgEnergy * 1000 + durationSec * 3 + estimatedBpm) % musicalKeys.length))];
+  const detectedKey = detectKey(audioBuffer);
 
   // Precision Genre and Subgenre Classification
   const genreProfile = classifyAudio(fileName, estimatedBpm, spectralFeatures, estimatedLufs, dynamicRangeDb);
@@ -1126,6 +1113,11 @@ export function analyzeAudioBuffer(
     lufsIntegrated: estimatedLufs,
     truePeakDb,
     dynamicRangeDb,
+    technicalData: {
+      lufs: estimatedLufs,
+      truePeak: truePeakDb,
+      dynamicRange: dynamicRangeDb,
+    },
     metrics: {
       structureAndRhythm: {
         id: 'm1',

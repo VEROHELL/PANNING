@@ -3,7 +3,6 @@ import {
   Zap, 
   Sparkles, 
   TrendingUp, 
-  Check, 
   Bot, 
   ArrowRight, 
   Activity, 
@@ -17,12 +16,10 @@ import {
   Sliders,
   Music
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
-import { AnalysisReport, ImprovementBooster, ViralPoint } from '../types';
+import { AnalysisReport, ViralPoint } from '../types';
 
 interface ScorePanelProps {
   report: AnalysisReport;
-  onBoosterToggled?: (boosterId: string, applied: boolean) => void;
   onOpenChat?: () => void;
   onSeekAudio?: (seconds: number) => void;
   currentAudioTime?: number;
@@ -34,39 +31,12 @@ export const ScorePanel: React.FC<ScorePanelProps> = ({
   onSeekAudio,
   currentAudioTime = 0
 }) => {
-  const [boosters, setBoosters] = useState<ImprovementBooster[]>(report.boosters);
   const [activeLayer, setActiveLayer] = useState<'composite' | 'transients' | 'hook' | 'all'>('composite');
   const [hoveredPoint, setHoveredPoint] = useState<ViralPoint | null>(null);
   const [hoveredX, setHoveredX] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  // Calculate live boosted score
-  const appliedBoost = boosters
-    .filter((b) => b.applied)
-    .reduce((acc, b) => acc + b.potentialScoreBoost, 0);
-  
-  const currentScore = Math.min(99, report.commercialScore + appliedBoost);
-  const isBoosted = appliedBoost > 0;
-
-  const handleToggleBooster = (id: string) => {
-    setBoosters((prev) =>
-      prev.map((b) => {
-        if (b.id === id) {
-          const nextState = !b.applied;
-          if (nextState && currentScore + b.potentialScoreBoost >= 80 && currentScore < 80) {
-            confetti({
-              particleCount: 50,
-              spread: 60,
-              origin: { y: 0.6 },
-              colors: ['#0F172A', '#38BDF8', '#94A3B8', '#10B981'],
-            });
-          }
-          return { ...b, applied: nextState };
-        }
-        return b;
-      })
-    );
-  };
+  const currentScore = report.commercialScore;
 
   const circumference = 2 * Math.PI * 84;
   const strokeDashoffset = circumference - (currentScore / 100) * circumference;
@@ -272,16 +242,9 @@ export const ScorePanel: React.FC<ScorePanelProps> = ({
                 <span className="ml-1 text-2xl font-mono text-slate-400 font-bold">/100</span>
               </div>
 
-              {isBoosted ? (
-                <div className="mt-1 inline-flex items-center gap-1 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-0.5 text-xs font-mono font-extrabold text-emerald-700 shadow-xs">
-                  <TrendingUp className="h-3.5 w-3.5" />
-                  <span>+{appliedBoost} PTS SIMULADOS</span>
-                </div>
-              ) : (
-                <div className="mt-1 inline-flex items-center rounded-full border border-slate-300 bg-slate-100 px-3 py-0.5 font-mono text-xs font-bold uppercase text-slate-700">
-                  {report.scoreTier === 'high' ? 'Hit Comercial' : report.scoreTier === 'medium' ? 'Estándar Competitivo' : 'Potencial por Pulir'}
-                </div>
-              )}
+              <div className="mt-1 inline-flex items-center rounded-full border border-slate-300 bg-slate-100 px-3 py-0.5 font-mono text-xs font-bold uppercase text-slate-700">
+                {report.scoreTier === 'high' ? 'Hit Comercial' : report.scoreTier === 'medium' ? 'Estándar Competitivo' : 'Potencial por Pulir'}
+              </div>
             </div>
           </div>
 
@@ -874,71 +837,9 @@ export const ScorePanel: React.FC<ScorePanelProps> = ({
               {points[0]?.viralScore ? `${points[0].viralScore}% Potencial` : '85% Potencial'}
             </div>
             <p className="mt-1.5 text-[11px] leading-tight text-slate-600 font-sans">
-              Impacto inmediato en el arranque del track para asegurar el primer ciclo de reproducción.
+                Impacto inmediato en el arranque del track para asegurar el primer ciclo de reproducción.
             </p>
           </div>
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 3. LIVE POTENTIAL BOOSTER (SIMULADOR DE MEJORA EN 1 CLIC)                  */}
-      {/* ========================================================================= */}
-      <div className="border-t-2 border-slate-200 pt-8">
-        <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-900 text-sky-400 text-[10px] font-bold">
-              ⚡
-            </span>
-            <h4 className="text-xs font-mono font-extrabold text-slate-900 uppercase tracking-[0.2em]">
-              SIMULADOR DE POTENCIAL // 1-CLICK OPTIMIZATION:
-            </h4>
-          </div>
-          <span className="text-xs font-mono text-slate-600">
-            Score Potencial Calculado: <strong className="text-slate-900 font-bold font-mono text-sm">{Math.min(99, report.commercialScore + appliedBoost)} / 100</strong>
-          </span>
-        </div>
-
-        <p className="mb-4 text-xs text-slate-500 font-sans">
-          Haz clic en cada corrección para simular cómo aumentaría el puntaje de tu canción al aplicar estos ajustes en tu DAW:
-        </p>
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {boosters.map((booster, idx) => (
-            <div
-              key={booster.id}
-              onClick={() => handleToggleBooster(booster.id)}
-              className={`flex cursor-pointer items-start gap-3 rounded-xl border-2 p-4 transition-all duration-200 ${
-                booster.applied
-                  ? 'border-slate-800 bg-slate-100 text-slate-900 shadow-sm ring-2 ring-slate-800/20'
-                  : 'border-slate-300 bg-white/90 text-slate-700 hover:border-slate-400 hover:bg-slate-50'
-              }`}
-            >
-              <div
-                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
-                  booster.applied
-                    ? 'border-slate-900 bg-slate-900 text-white'
-                    : 'border-slate-400 bg-white'
-                }`}
-              >
-                {booster.applied && <Check className="h-3.5 w-3.5 stroke-[3] text-sky-400" />}
-              </div>
-
-              <div className="flex-1">
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-xs font-bold text-slate-900">
-                    <span className="font-mono text-[10px] text-slate-500 mr-1.5 font-bold">0{idx + 1}</span>
-                    {booster.title}
-                  </span>
-                  <span className="shrink-0 rounded-md border border-slate-300 bg-slate-50 px-1.5 py-0.5 text-[10px] font-mono font-extrabold text-slate-900 shadow-2xs">
-                    +{booster.potentialScoreBoost} pts
-                  </span>
-                </div>
-                <p className="mt-1 text-[11px] leading-tight text-slate-600 font-sans">
-                  {booster.description}
-                </p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>

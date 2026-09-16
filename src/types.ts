@@ -149,6 +149,11 @@ export interface AnalysisReport {
   lufsIntegrated: number;
   truePeakDb: number;
   dynamicRangeDb: number;
+  technicalData?: {
+    lufs: number;
+    truePeak: number;
+    dynamicRange: number;
+  };
   metrics: {
     structureAndRhythm: MetricDetail;
     hookStrength: MetricDetail;
